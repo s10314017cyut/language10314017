@@ -1,0 +1,8 @@
+from django.shortcuts import render 
+
+# Create your views here.
+def wiki(request):
+    return render(request,'wiki/wiki.html')
+def about(request):
+    return render(request,'wiki/about.html')
+    

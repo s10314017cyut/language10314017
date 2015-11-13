@@ -9,4 +9,14 @@ def wiki(request):
 
 def about(request):
     return render(request,'wiki/about.html')
+
+def category(request, categoryName):
+    context = {}
+    try:
+        category = Category.objects.get(name=categoryName)
+        context['category'] = category
+        context['pages'] = Page.objects.filter(category=category)
+    except Category.DoesNotExist:
+        pass
+    return render(request, 'wiki/category.html', context)
     

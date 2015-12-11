@@ -62,7 +62,7 @@ def deleteCategory(request, categoryID):
     if request.method!='POST':
         return wiki(request)
     # request.method=='POST':
-        categoryToDelete = Category.objects.get(id=categoryID)
+    categoryToDelete = Category.objects.get(id=categoryID)
     if categoryToDelete:
         categoryToDelete.delete()
         return redirect(reverse('wiki:wiki'))
@@ -79,3 +79,36 @@ def deletePage(request, pageID):
     else:
         categoryID = ''
     return redirect(reverse('wiki:category', args=(categoryID, )))    
+
+def updateCategory(request, categoryID):
+    template = 'wiki/updateCategory.html'
+    try:
+        category = Category.objects.get(id=categoryID)
+    except Category.DoesNotExist :
+        return wiki(request)
+    if request.method=='GET':
+        form = CategoryForm(instance=category)
+        return render(request, template, {'form':form, 'category':category})
+    # request.method=='POST'
+    form = CategoryForm(request.POST, instance=category)
+    if not form.is_valid():
+        return render(request, template, {'form':form, 'category':category})
+    form.save()
+    return redirect(reverse('wiki:wiki'))
+
+
+def updatePage(request, pageID):
+    template = 'wiki/updatePage.html'
+    try:
+        page = Page.objects.get(id=pageID)
+    except Page.DoesNotExist:
+        return category(request, '')
+    if request.method=='GET':
+        form = PageForm(instance=page)
+        return render(request, template, {'form':form, 'page':page})
+    # request.method=='POST'
+    form = PageForm(request.POST, instance=page)
+    if not form.is_valid():
+        return render(request, template, {'form':form, 'page':page})
+    page.save()
+    return redirect(reverse('wiki:category', args=(page.category.id,)))
